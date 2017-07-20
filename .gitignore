@@ -1,0 +1,6 @@
+*.xsl
+PRE*.xslx
+*.pyc
+*.pdf
+*#*
+*~
