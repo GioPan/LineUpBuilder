@@ -115,47 +115,33 @@ class Model:
             if(self.node.parent == None):
                   print 'No parent node'
             else:
-                  if self.node.childrenNumber == 1:
-                        def maker_zero(model):
-                              return model.x[self.node.parent.solution[0]] == 0
-                        
-                        self.model.constraint_zero = Constraint(rule = maker_zero)
-                        
-                        def maker_sum(model):
-                              lhs = 0
-                              for p in self.node.parent.solution:
-                                    if self.node.parent.solution.index(p) != 0:
-                                          lhs = lhs + model.x[p]
-                              return lhs <= len(self.node.parent.solution) - differences
-                        
-                        self.model.constraint_sum = Constraint(rule = maker_sum)
-                  else:
-                        ones = []
-                        others = []
-                        playerZero = None
-                        for p in self.node.parent.solution:
-                              if self.node.parent.solution.index(p) < self.node.childrenNumber - 1:
-                                    ones.append(p)
-                              if self.node.parent.solution.index(p) > self.node.childrenNumber - 1:
-                                    others.append(p)
-                              if self.node.parent.solution.index(p) == self.node.childrenNumber - 1:
-                                    playerZero = p
+                  
+                  ones = []
+                  others = []
+                  playerZero = None
+                  for p in self.node.parent.solution:
+                        if self.node.parent.solution.index(p) < self.node.childrenNumber - 1:
+                              ones.append(p)
+                        if self.node.parent.solution.index(p) > self.node.childrenNumber - 1:
+                              others.append(p)
+                        if self.node.parent.solution.index(p) == self.node.childrenNumber - 1:
+                              playerZero = p
                                           
-                        def maker_ones(model,player):
-                              return model.x[player] == 1
-                        self.model.constraints_ones = Constraint(ones,rule=maker_ones)
-
-                        def maker_zero(model):
-                              return model.x[playerZero] == 0
-                        self.model.constraint_zero = Constraint(rule = maker_zero)
+                  def maker_ones(model,player):
+                        return model.x[player] == 1
+                  self.model.constraints_ones = Constraint(ones,rule=maker_ones)
+                  
+                  def maker_zero(model):
+                        return model.x[playerZero] == 0
+                  self.model.constraint_zero = Constraint(rule = maker_zero)
                         
 
-                        def maker_sum(model):
-                              lhs = 0
-                              for p in others:
-                                    lhs = lhs + model.x[p]
-                                    return lhs <= len(self.node.parent.solution) - differences - (self.node.childrenNumber)
-                        self.model.constraints_sum = Constraint(rule=maker_sum)
+                  def maker_sum(model):
+                        lhs = 0
+                        for p in others:
+                              lhs = lhs + model.x[p]
+                        return lhs <= len(self.node.parent.solution) - differences - (self.node.childrenNumber -1 )
+                  self.model.constraints_sum = Constraint(rule=maker_sum)
                   
             
 
