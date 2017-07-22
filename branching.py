@@ -15,19 +15,29 @@ class Branching:
         m = Model(problem,root,differences)
         m.solve(60)
         Branching.addSolution(solutions,root,nSolutions)
-        print root.solution
         nNodes = teamSize-differences+1
-        print nNodes
         for i in range(1,nNodes+1):
             n = Node(root,i)
             m = Model(problem,n,differences)
             m.solve(60)
-            Branching.addSolution(solutions,n,nSolutions)
-            nodes.append(n)
-            #print 'Solved node ',i
-            #print n.solution
+            if n.objective > float('-inf'):
+                Branching.addSolution(solutions,n,nSolutions)
+                nodes.append(n)
 
+        
+        nodesToExplore = []
+        cutoff = Branching.getSmallestValue(solutions)
+        for node in nodes:
+            if node.objective <= cutoff:
+                print node.id,' fathomed'                 
+            else:
+                nodesToExplore.append(node)
+        nodes = nodesToExplore
+        print 'Nodes to explore'
+        for n in nodes:
+            print n.id
         return solutions
+    
         
     @staticmethod
     def addSolution(solutions,solution,length):
@@ -38,8 +48,7 @@ class Branching:
             if solution.objective > Branching.getSmallestValue(solutions):
                 Branching.removeSmallest(solutions)
                 solutions.append(solution)
-            else:
-                print 'Solution ', solution.id,' not better than the other available'
+                print 'New solution in the K-best'
                 
 
     @staticmethod
@@ -52,15 +61,11 @@ class Branching:
 
     @staticmethod
     def removeSmallest(solutions):
-        print 'Removing Smallest'
         smallestSolution = None
         smallestObjective = float("inf")
         for node in solutions:
             if node.objective < smallestObjective:
-                print node.id,' ',node.objective
                 smallestObjective = node.objective
                 smallestSolution = node
-        print 'Removing ', smallestSolution.id
         solutions.remove(smallestSolution)
-        print solutions
         

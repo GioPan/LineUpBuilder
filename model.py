@@ -112,10 +112,7 @@ class Model:
             self.model.constraints_eight = Constraint(self.model.Duplicates, rule = maker_eight)
 
             ### Branching constraints
-            if(self.node.parent == None):
-                  print 'No parent node'
-            else:
-                  
+            if(self.node.parent != None):                  
                   ones = []
                   others = []
                   playerZero = None
@@ -154,7 +151,6 @@ class Model:
             self.results = solver.solve(self.model)
 
             if self.results.solver.termination_condition == TerminationCondition.infeasible:
-                  print 'Status ', self.results.solver.status, " ",  self.results.solver.termination_condition
                   self.node.objective = float('-inf')
                   self.node.solution = None
             else:
