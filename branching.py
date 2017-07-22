@@ -10,7 +10,6 @@ class Branching:
         
         nodes = []
         solutions = []
-        
         root = Node()
         m = Model(problem,root,differences)
         m.solve(60)
@@ -23,19 +22,21 @@ class Branching:
             if n.objective > float('-inf'):
                 Branching.addSolution(solutions,n,nSolutions)
                 nodes.append(n)
-
-        
-        nodesToExplore = []
-        cutoff = Branching.getSmallestValue(solutions)
-        for node in nodes:
-            if node.objective <= cutoff:
-                print node.id,' fathomed'                 
-            else:
-                nodesToExplore.append(node)
-        nodes = nodesToExplore
-        print 'Nodes to explore'
-        for n in nodes:
-            print n.id
+                
+        nodes = Branching.fathomNodes(nodes,solutions)
+        while len(nodes) > 0:
+            node = Branching.getBestNode(nodes)
+            print 'Exploring node ', node.id
+            nodes.remove(node)
+            for i in range(1,nNodes+1):
+                n = Node(node,i)
+                m = Model(problem,n,differences)
+                m.solve(60)
+                if n.objective > float('-inf'):
+                    Branching.addSolution(solutions,n,nSolutions)
+                    nodes.append(n)
+            nodes = Branching.fathomNodes(nodes,solutions)
+            
         return solutions
     
         
@@ -68,4 +69,24 @@ class Branching:
                 smallestObjective = node.objective
                 smallestSolution = node
         solutions.remove(smallestSolution)
+
+    @staticmethod
+    def getBestNode(nodes):
+        bestNode = None
+        bestObjective = float('-inf')
+        for n in nodes:
+            if n.objective > bestObjective:
+                bestNode = n
+                bestObjective = n.objective
+        return bestNode
         
+    @staticmethod
+    def fathomNodes(nodes,solutions):
+        nodesToExplore = []
+        cutoff = Branching.getSmallestValue(solutions)
+        for node in nodes:
+            if node.objective <= cutoff:
+                print node.id,' fathomed'                 
+            else:
+                nodesToExplore.append(node)
+        return nodesToExplore

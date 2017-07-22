@@ -10,7 +10,7 @@ import argparse
 
 
 p = Generator.generate("data.dat","params.dat")
-nLineUps = 3
+nLineUps = 5
 nDifferences = 2
 solutions = Branching.solve(p,nLineUps,p.nPlayersRequired,nDifferences)
 for node in solutions:
