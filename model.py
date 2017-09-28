@@ -112,7 +112,14 @@ class Model:
             self.model.constraints_eight = Constraint(self.model.Duplicates, rule = maker_eight)
 
             ### Branching constraints
-            if(self.node.parent != None):                  
+            branchingConstraints = []
+            if(self.node.parent != None):
+                  ### Inherits the branching constraints of the parent node
+                  if self.node.parent.branchingConstraints != None:
+                        for c in self.node.parent.branchingConstraints:                        
+                              branchingConstraints.append(c)
+                        
+                  ### New branching constraints for the current nodes
                   ones = []
                   others = []
                   playerZero = None
@@ -123,22 +130,25 @@ class Model:
                               others.append(p)
                         if self.node.parent.solution.index(p) == self.node.childrenNumber - 1:
                               playerZero = p
-                                          
-                  def maker_ones(model,player):
-                        return model.x[player] == 1
-                  self.model.constraints_ones = Constraint(ones,rule=maker_ones)
-                  
-                  def maker_zero(model):
-                        return model.x[playerZero] == 0
-                  self.model.constraint_zero = Constraint(rule = maker_zero)
-                        
 
-                  def maker_sum(model):
-                        lhs = 0
-                        for p in others:
-                              lhs = lhs + model.x[p]
-                        return lhs <= len(self.node.parent.solution) - differences - (self.node.childrenNumber -1 )
-                  self.model.constraints_sum = Constraint(rule=maker_sum)
+                  for p in ones:
+                        branchingConstraints.append(self.model.x[p] == 1)
+                  branchingConstraints.append(self.model.x[playerZero] == 0)
+                        
+                  lhs = 0
+                  for p in others:
+                        lhs = lhs + self.model.x[p]
+                  branchingConstraints.append(lhs <= len(self.node.parent.solution) - differences - (self.node.childrenNumber -1 ))
+
+                  ### Saves the constraints in the node
+                  self.node.branchingConstraints = branchingConstraints
+
+                  ### Adds the constraints to the model
+                  def makerBranching(model,constraint):
+                        return constraint
+                  self.model.branching = Constraint(branchingConstraints, rule = makerBranching)
+                        
+                  
                   
             
 

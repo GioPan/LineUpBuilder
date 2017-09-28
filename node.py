@@ -9,6 +9,7 @@ class Node:
         self.childrenNumber = childrenNumber
         Node.counter = Node.counter + 1
         self.last = False
+        self.branchingConstraints = []
         
 # def __eq__(self, other):
 #         return self.id == other.id
