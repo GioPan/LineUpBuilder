@@ -4,6 +4,7 @@ from pyomo.opt import SolverFactory
 from pyomo.core import Var
 from problem import Problem
 from pyomo.opt import SolverStatus, TerminationCondition
+from branchingConstraint import BranchingConstraint
 
 class Model:
       "Instances of this class represent mathematical models for the Line Up problem"
@@ -112,6 +113,7 @@ class Model:
             self.model.constraints_eight = Constraint(self.model.Duplicates, rule = maker_eight)
 
             ### Branching constraints
+            
             branchingConstraints = []
             if(self.node.parent != None):
                   ### Inherits the branching constraints of the parent node
@@ -131,21 +133,36 @@ class Model:
                         if self.node.parent.solution.index(p) == self.node.childrenNumber - 1:
                               playerZero = p
 
+                  ### For each player which must be 1 it adds, as lhs, a list made only of the player
                   for p in ones:
-                        branchingConstraints.append(self.model.x[p] == 1)
-                  branchingConstraints.append(self.model.x[playerZero] == 0)
-                        
-                  lhs = 0
+                        branchingConstraints.append(BranchingConstraint([p],'eq',1))
+
+                  ### For the player which myst be 0 it adds, as lhs, a list made only of the player
+                  branchingConstraints.append(BranchingConstraint([playerZero],'eq',0))
+
+                  ### For the remaining players it adds, as lhs, the list of the playes which then must be summed
+                  lhs = []
                   for p in others:
-                        lhs = lhs + self.model.x[p]
-                  branchingConstraints.append(lhs <= len(self.node.parent.solution) - differences - (self.node.childrenNumber -1 ))
+                        lhs.append(p)
+                  branchingConstraints.append(BranchingConstraint(lhs,'leq',len(self.node.parent.solution) - differences - (self.node.childrenNumber -1 )))
 
                   ### Saves the constraints in the node
                   self.node.branchingConstraints = branchingConstraints
 
                   ### Adds the constraints to the model
                   def makerBranching(model,constraint):
-                        return constraint
+                        ### Creates the lhs as the sum of the players in constraints.lhs
+                        lhs = 0
+                        for p in constraint.lhs:
+                              lhs = lhs + model.x[p]
+                              
+                        if constraint.verse == 'eq':
+                              return lhs == constraint.rhs
+                        elif constraint.verse == 'leq':
+                              return lhs <= constraint.rhs
+                        else:
+                              return lhs >= constraint.rhs
+                                              
                   self.model.branching = Constraint(branchingConstraints, rule = makerBranching)
                         
                   
