@@ -173,8 +173,8 @@ class Model:
             self.model.pprint()
          
       def solve(self,timeLimit):
-            solver = SolverFactory('cplex')
-            solver.options['timeLimit'] = timeLimit
+            solver = SolverFactory('glpk')
+           # solver.options['timeLimit'] = timeLimit
             self.results = solver.solve(self.model)
 
             if self.results.solver.termination_condition == TerminationCondition.infeasible:
