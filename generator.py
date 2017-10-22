@@ -25,12 +25,12 @@ class Generator:
         with open(data_file) as file:
             # Skips the first line
             file.readline()
-            budget,nPlayers,gks,dfs,mfs,fws,extras,maxPerTeam,minTeams = (int(s) for s in file.readline().split())
+            nLineUps,nDifferences,budget,nPlayers,gks,dfs,mfs,fws,extras,maxPerTeam,minTeams = (int(s) for s in file.readline().split())
             playersPerRole = {}
             playersPerRole['GK'] = gks
             playersPerRole['D'] = dfs
             playersPerRole['M'] = mfs
             playersPerRole['F'] = fws
-            problem = Problem(players,roles,teams,budget,nPlayers,playersPerRole,extras,maxPerTeam,minTeams)            
+            problem = Problem(nLineUps,nDifferences,players,roles,teams,budget,nPlayers,playersPerRole,extras,maxPerTeam,minTeams)            
         return problem
     

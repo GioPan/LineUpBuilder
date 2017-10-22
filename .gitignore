@@ -5,3 +5,7 @@ PRE*.xslx
 *.pdf
 *#*
 *~
+/dist/
+/build/
+main.spec
+pyomo.opt.spec

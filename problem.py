@@ -3,7 +3,9 @@ from player import Player
 
 class Problem:
 
-    def __init__(self,players,roles,teams,budget,nPlayersRequired,nPlayersPerRole,extraPlayers,maxNPlayersOfATeam,minTeamsRepresented):
+    def __init__(self,nLineUps,nDifferences,players,roles,teams,budget,nPlayersRequired,nPlayersPerRole,extraPlayers,maxNPlayersOfATeam,minTeamsRepresented):
+        self.nLineUps = nLineUps
+        self.nDifferences = nDifferences
         self.players = players
         self.teams = teams
         self.roles = roles

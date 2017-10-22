@@ -1,9 +1,14 @@
 from __future__ import division
+from pyomo.checker import plugins
+from pyomo.pysp import plugins
+from pyomo.gdp import plugins
+from pyomo.mpec import plugins
+from pyomo.neos import plugins
 from pyomo.environ import *
 from pyomo.opt import SolverFactory
-from pyomo.core import Var
+from pyomo.core import Var, plugins
 from problem import Problem
-from pyomo.opt import SolverStatus, TerminationCondition
+from pyomo.opt import SolverStatus, TerminationCondition, plugins
 from branchingConstraint import BranchingConstraint
 
 class Model:
